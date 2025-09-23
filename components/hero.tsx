@@ -1,6 +1,7 @@
 import { Button } from "./ui/button";
 import { ArrowRight, Shield, Heart } from "lucide-react";
 import { NavBar } from "./nav";
+import Link from "next/link";
 
 export function Hero() {
   return (
@@ -9,7 +10,30 @@ export function Hero() {
       <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-black/5 rounded-full blur-3xl"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gray-900/5 rounded-full blur-3xl"></div>
 
-      <NavBar />
+      <NavBar>
+        {/* center/right: links (hidden on mobile) */}
+        <div className="hidden items-center gap-4 text-3sm sm:flex">
+          <a href="#how" className="hover:opacity-80">
+            How it works
+          </a>
+          <a href="#privacy" className="hover:opacity-80">
+            Privacy
+          </a>
+          <a href="#faq" className="hover:opacity-80">
+            FAQ
+          </a>
+        </div>
+        {/* right: theme toggle */}
+        <div className="shrink-0 gap-2 flex">
+          <Link
+            href="/dashboard"
+            className="text-sm inline-flex rounded-full border border-black/10 bg-white/80 h-9 px-3 py-1.5 font-semibold shadow-sm backdrop-blur-md transition hover:bg-white
+                         dark:border-white/10 dark:bg-white/15 dark:hover:bg-white/20"
+          >
+            Open App
+          </Link>
+        </div>
+      </NavBar>
 
       <div className="flex-1 flex items-center px-6 max-w-7xl mx-auto w-full relative z-10 mt-32 md:mt-0">
         <div className="grid md:grid-cols-2 gap-16 items-center w-full">
@@ -55,7 +79,7 @@ export function Hero() {
                 <div className="p-2 bg-black/5 rounded-full">
                   <Heart className="h-5 w-5 text-gray-700" />
                 </div>
-                <span className="text-sm text-gray-600">Community Backed</span>
+                <span className="text-sm text-gray-600">ZERO Fee</span>
               </div>
             </div>
           </div>

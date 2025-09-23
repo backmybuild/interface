@@ -1,7 +1,7 @@
 "use client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createAppKit } from "@reown/appkit/react";
-import { mainnet, arbitrum } from "@reown/appkit/networks";
+import { baseSepolia, base } from "@reown/appkit/networks";
 import React, { type ReactNode } from "react";
 import { cookieToInitialState, WagmiProvider, type Config } from "wagmi";
 import { cookieStorage, createStorage } from "@wagmi/core";
@@ -9,7 +9,7 @@ import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { ProgressProvider } from "@bprogress/next/app";
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || "";
-const networks = [mainnet, arbitrum];
+const networks = [baseSepolia, base];
 
 //Set up the Wagmi Adapter (Config)
 const wagmiAdapter = new WagmiAdapter({
@@ -30,16 +30,20 @@ const metadata = {
   description:
     "A confidential way to back builders. Build on @ethereum. Live on @base",
   url: "https://appkitexampleapp.com", // origin must match your domain & subdomain
-  icons: ["https://avatars.githubusercontent.com/u/179229932"],
+  icons: ["https://raw.githubusercontent.com/backmybuild/interface/refs/heads/main/public/back-square-logo.png"],
 };
 
 // Create the modal
 const modal = createAppKit({
   adapters: [wagmiAdapter],
   projectId,
-  networks: [mainnet, arbitrum],
-  defaultNetwork: mainnet,
+  networks: [baseSepolia, base],
+  defaultNetwork: base,
   metadata: metadata,
+  themeVariables: {
+    "--w3m-font-size-master": "12px",
+  },
+  themeMode: "light",
   features: {
     analytics: true, // Optional - defaults to your Cloud configuration
   },
@@ -64,7 +68,7 @@ const ContextProvider = ({
     >
       <ProgressProvider
         height="4px"
-        color="#f0e7d6"
+        color="#baad93"
         options={{ showSpinner: false }}
         shallowRouting
       ></ProgressProvider>

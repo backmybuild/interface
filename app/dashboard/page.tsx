@@ -31,7 +31,7 @@ import { NextPage } from "next";
 
 // Mock data - in real app this would come from backend
 const mockUser = {
-  hasPage: false,
+  hasPage: true,
   profile: {
     name: "Alex Chen",
     bio: "Building the future of DeFi. Previously at Uniswap. Passionate about open-source and decentralized finance.",
@@ -106,7 +106,7 @@ const DashboardPage: NextPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Header */}
       {/* <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -142,9 +142,13 @@ const DashboardPage: NextPage = () => {
           </div>
         </div>
       </div> */}
-      <NavBar />
+      <NavBar>
+        <div>
+          <appkit-button size="sm"/>
+        </div>
+      </NavBar>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8 mt-20">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
@@ -178,7 +182,7 @@ const DashboardPage: NextPage = () => {
                 </Button>
                 <Button
                   variant="outline"
-                  className="border-white/20 text-white hover:bg-white/10 flex-1"
+                  className="text-black bg-white flex-1"
                   onClick={copyPageUrl}
                 >
                   <Copy className="h-4 w-4 mr-2" />
@@ -226,22 +230,6 @@ const DashboardPage: NextPage = () => {
                 ))}
               </div>
             </Card>
-
-            {/* Page Stats */}
-            <div className="grid md:grid-cols-3 gap-4">
-              <Card className="p-6 text-center">
-                <div className="text-2xl mb-2">156</div>
-                <p className="text-gray-600">Page Views</p>
-              </Card>
-              <Card className="p-6 text-center">
-                <div className="text-2xl mb-2">23</div>
-                <p className="text-gray-600">Supporters</p>
-              </Card>
-              <Card className="p-6 text-center">
-                <div className="text-2xl mb-2">4.2</div>
-                <p className="text-gray-600">Avg Donation (ETH)</p>
-              </Card>
-            </div>
           </div>
 
           {/* Sidebar */}

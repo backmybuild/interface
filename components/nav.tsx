@@ -1,8 +1,13 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
+import { NextPage } from "next";
 
-export const NavBar = () => {
+type NavBarProps = {
+  children: React.ReactNode;
+};
+
+export const NavBar: NextPage<NavBarProps> = ({ children }) => {
   return (
     <nav className="fixed left-1/2 top-6 z-40 -translate-x-1/2">
       {/* width wrapper: long on mobile, auto on sm+ */}
@@ -28,31 +33,9 @@ export const NavBar = () => {
             </Link>
           </div>
 
-          {/* center/right: links (hidden on mobile) */}
-          <div className="hidden items-center gap-4 text-3sm sm:flex">
-            <a href="#how" className="hover:opacity-80">
-              How it works
-            </a>
-            <a href="#privacy" className="hover:opacity-80">
-              Privacy
-            </a>
-            <a href="#faq" className="hover:opacity-80">
-              FAQ
-            </a>
-          </div>
-
-          {/* right: theme toggle */}
-          <div className="shrink-0 gap-2 flex">
-            <Link
-              href="/dashboard"
-              className="text-sm inline-flex rounded-full border border-black/10 bg-white/80 h-9 px-3 py-1.5 font-semibold shadow-sm backdrop-blur-md transition hover:bg-white
-                         dark:border-white/10 dark:bg-white/15 dark:hover:bg-white/20"
-            >
-              Open App
-            </Link>
-          </div>
+          {children}
         </div>
       </div>
     </nav>
   );
-}
+};
