@@ -107,44 +107,9 @@ const DashboardPage: NextPage = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      {/* <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-600"
-                onClick={() => {}}
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Site
-              </Button>
-              <Separator orientation="vertical" className="h-6" />
-              <h1 className="text-xl">Builder Dashboard</h1>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  window.open(`https://${user.profile.pageUrl}`, "_blank")
-                }
-              >
-                <Eye className="h-4 w-4 mr-2" />
-                View Page
-              </Button>
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div> */}
       <NavBar>
         <div>
-          <appkit-button size="sm"/>
+          <appkit-button size="sm" />
         </div>
       </NavBar>
 
@@ -153,17 +118,17 @@ const DashboardPage: NextPage = () => {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Balance Card */}
-            <Card className="p-8 bg-gradient-to-br from-black to-gray-800 text-white">
+            <Card className="p-8 bg-[#baad93] text-black">
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <p className="text-gray-300 mb-2">Total Received</p>
+                  <p className=" mb-2">Total Received</p>
                   <div className="flex items-baseline space-x-3">
                     <span className="text-4xl">{user.balance.total}</span>
-                    <span className="text-xl text-gray-300">
+                    <span className="text-xl ">
                       {user.balance.currency}
                     </span>
                   </div>
-                  <p className="text-gray-400 mt-1">
+                  <p className=" mt-1">
                     ${user.balance.usdValue.toLocaleString()}
                   </p>
                 </div>
@@ -277,11 +242,6 @@ const DashboardPage: NextPage = () => {
                   )}
                 </div>
               </div>
-            </Card>
-
-            {/* Quick Actions */}
-            <Card className="p-6">
-              <h3 className="text-lg mb-4">Quick Actions</h3>
               <div className="space-y-3">
                 <Button variant="outline" className="w-full justify-start">
                   <ExternalLink className="h-4 w-4 mr-2" />
