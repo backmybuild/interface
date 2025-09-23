@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 // import ThemeToggle from "./ThemeToggle";
 
-const NavBar = () => {
+export const NavBar = () => {
   return (
     <nav className="fixed left-1/2 top-6 z-40 -translate-x-1/2">
       {/* width wrapper: long on mobile, auto on sm+ */}
@@ -20,7 +20,7 @@ const NavBar = () => {
             <Link href="/" className="flex items-center gap-2 rounded-full">
               <Image
                 src="/back.png"
-                alt="Stealth.Giving Logo"
+                alt="back logo"
                 width={28}
                 height={28}
                 className="h-8 w-15"
@@ -30,7 +30,7 @@ const NavBar = () => {
           </div>
 
           {/* center/right: links (hidden on mobile) */}
-          <div className="hidden items-center gap-4 text-sm sm:flex">
+          <div className="hidden items-center gap-4 text-3sm sm:flex">
             <a href="#how" className="hover:opacity-80">
               How it works
             </a>
@@ -58,5 +58,3 @@ const NavBar = () => {
     </nav>
   );
 }
-
-export default NavBar;
