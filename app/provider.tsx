@@ -4,8 +4,9 @@ import { createAppKit } from "@reown/appkit/react";
 import { mainnet, arbitrum } from "@reown/appkit/networks";
 import React, { type ReactNode } from "react";
 import { cookieToInitialState, WagmiProvider, type Config } from "wagmi";
-import { cookieStorage, createStorage, http } from "@wagmi/core";
+import { cookieStorage, createStorage } from "@wagmi/core";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+import { ProgressProvider } from "@bprogress/next/app";
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || "";
 const networks = [mainnet, arbitrum];
@@ -61,6 +62,12 @@ const ContextProvider = ({
       config={wagmiAdapter.wagmiConfig as Config}
       initialState={initialState}
     >
+      <ProgressProvider
+        height="4px"
+        color="#f0e7d6"
+        options={{ showSpinner: false }}
+        shallowRouting
+      ></ProgressProvider>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   );

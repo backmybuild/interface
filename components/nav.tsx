@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-// import ThemeToggle from "./ThemeToggle";
 
 export const NavBar = () => {
   return (
@@ -51,7 +50,6 @@ export const NavBar = () => {
             >
               Open App
             </Link>
-            {/* <ThemeToggle /> */}
           </div>
         </div>
       </div>
