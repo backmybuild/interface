@@ -40,9 +40,6 @@ const modal = createAppKit({
   networks: [baseSepolia, base],
   defaultNetwork: base,
   metadata: metadata,
-  themeVariables: {
-    "--w3m-font-size-master": "12px",
-  },
   themeMode: "light",
   features: {
     analytics: true, // Optional - defaults to your Cloud configuration

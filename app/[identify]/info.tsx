@@ -402,6 +402,15 @@ export const DonationInfo: NextPage = () => {
               </div>
             )}
           </div>
+          <div className="mt-2 text-center text-xs">
+            <Link
+              href="/"
+              target="_blank"
+              className="text-center text-xs underline decoration-dotted hover:opacity-80"
+            >
+              Powered by Back
+            </Link>
+          </div>
         </section>
       </div>
 
