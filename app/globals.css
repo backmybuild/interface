@@ -156,6 +156,14 @@ body {
   }
 }
 
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
 /**
  * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
  */
