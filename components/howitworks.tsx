@@ -38,7 +38,7 @@ export function HowItWorks() {
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Getting community support as a crypto builder has never been easier
-            or more private. Here's how Back makes it happen.
+            or more private. Here&apos;s how Back makes it happen.
           </p>
         </div>
 

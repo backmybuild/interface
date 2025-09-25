@@ -55,7 +55,7 @@ export function FeaturesSection() {
         <div className="text-center mb-16">
           <h2 className="mb-4">Why Choose Back?</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            We've built the simplest way for creators to receive crypto
+            We&apos;ve built the simplest way for creators to receive crypto
             donations. No technical knowledge required, no fees, and full
             control over your funds.
           </p>
