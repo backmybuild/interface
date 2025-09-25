@@ -1,7 +1,6 @@
 "use server";
 import { Metadata, NextPage, ResolvingMetadata } from "next";
 import axios from "axios";
-import { Address, Hex, hexToString, isAddress, stringToHex } from "viem";
 import { DonationInfo } from "./info";
 
 type Props = {
@@ -9,19 +8,11 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-type Profile = {
-  address: Address;
-  displayName: string;
-  avatar: string;
-  description: string;
-};
-
 export const generateMetadata = async (
   { params }: Props,
   _: ResolvingMetadata
 ): Promise<Metadata> => {
   const { identify } = await params;
-  console.log({ identify });
   const { data } = await axios.get(`https://api.web3.bio/profile/${identify}`);
   if (data.error) {
     return {

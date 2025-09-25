@@ -4,7 +4,7 @@ import { NextPage } from "next";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
-import { Address, formatUnits } from "viem";
+import { Address, formatUnits, parseUnits } from "viem";
 import { SocialIcon } from "@components/ui/social-icon";
 import { useAccount } from "wagmi";
 import {
@@ -215,6 +215,10 @@ export const DonationInfo: NextPage = () => {
     return tokensNeeded; // float value, e.g. 12.3456 tokens
   }, [amt, selectedToken]);
 
+  const handleTip = async (token: Token, amountUi: string) => {
+    console.log("Tipping", { token, amount: parseUnits(amountUi, token.decimals) });
+  };
+
   if (isLoading) {
     return (
       <main className="min-h-screen w-full bg-gray-50 text-gray-700 flex items-center justify-center">
@@ -376,16 +380,18 @@ export const DonationInfo: NextPage = () => {
                 {/* Tip button */}
                 <button
                   disabled={!isValid || !selectedToken || sendAmount <= 0}
+                  onClick={() =>
+                    handleTip(selectedToken!, sendAmount.toString())
+                  }
                   className="mt-1 w-full rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 disabled:opacity-40 px-4 py-3"
                 >
                   {selectedToken
                     ? `Send 
                   ${
-                    isValid && selectedToken
-                      ? `${formatUint(
-                          sendAmount.toString(),
-                          selectedToken.decimals
-                        )} ${selectedToken.symbol}`
+                    isValid
+                      ? `${formatDecimal(sendAmount.toString(), 6)} ${
+                          selectedToken.symbol
+                        }`
                       : "--"
                   }`
                     : "Select a token"}
