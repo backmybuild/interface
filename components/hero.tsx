@@ -1,28 +1,12 @@
 "use client";
-import { Search, Loader2 } from "lucide-react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { SearchInput } from "./search";
 
 export function HeroSection() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const router = useRouter()
-
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
-    router.push(`/${searchQuery.trim()}`);
-  };
-
   return (
     <section className="relative py-20 px-4 bg-gradient-to-b from-background to-secondary/20">
       <div className="max-w-4xl mx-auto text-center">
         <div className="mb-8">
-          <h1 className="mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+          <h1 className="mb-7 text-5xl bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
             Support Creators with Crypto
           </h1>
           <p className="max-w-2xl mx-auto text-muted-foreground mb-12">

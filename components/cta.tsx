@@ -26,7 +26,7 @@ export function CTASection() {
                 <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
                   <span>1</span>
                 </div>
-                <p>Share your wallet address, ENS, or social handle</p>
+                <p>Share your Back page</p>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
