@@ -175,8 +175,8 @@ export const DonationInfo: NextPage = () => {
         );
 
         const p: Profile = {
-          address: data[0].address as Address,
-          displayName: data[0].displayName as string,
+          address: (data[0].address as Address) || identify,
+          displayName: (data[0].displayName as string) || identify,
           avatar: data[0].avatar as string,
           description: data[0].description as string,
           socials: uniqueLinks.splice(0, 3),
@@ -216,7 +216,10 @@ export const DonationInfo: NextPage = () => {
   }, [amt, selectedToken]);
 
   const handleTip = async (token: Token, amountUi: string) => {
-    console.log("Tipping", { token, amount: parseUnits(amountUi, token.decimals) });
+    console.log("Tipping", {
+      token,
+      amount: parseUnits(amountUi, token.decimals),
+    });
   };
 
   if (isLoading) {
@@ -247,14 +250,25 @@ export const DonationInfo: NextPage = () => {
           {/* Header */}
           <div className="flex flex-col items-center gap-5">
             <img
-              src={profile.avatar || "/avatar.png"}
+              src={
+                profile.avatar ||
+                "https://www.gravatar.com/avatar/[email_hash]?s=200&d=identicon"
+              }
               alt={`${profile.displayName} avatar`}
               width={128}
               height={128}
               className="h-32 w-32 rounded-3xl object-cover ring-1 ring-gray-200"
             />
             <div>
-              <h1 className="text-2xl font-semibold">{profile.displayName}</h1>
+              <h1 className="text-2xl font-semibold">
+                <Link
+                  href={`https://basescan.org/address/${profile.address}`}
+                  target="_blank"
+                  className="underline"
+                >
+                  {profile.displayName}
+                </Link>
+              </h1>
               <p className="text-base text-gray-600 mt-2">
                 {profile.description}
               </p>

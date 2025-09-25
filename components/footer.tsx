@@ -1,105 +1,66 @@
-import { Github, Twitter, MessageCircle } from "lucide-react";
+import { Separator } from "./ui/separator";
 
 export function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-black to-gray-900 text-white px-6 py-20 relative overflow-hidden">
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
-      <div className="max-w-6xl mx-auto relative z-10">
-        <div className="grid md:grid-cols-4 gap-12 mb-16">
-          <div className="space-y-6">
-            <img
-              src="./back.png"
-              alt="Back Logo"
-              className="h-12 w-auto invert"
-            />
-            <p className="text-gray-300 text-lg leading-relaxed max-w-sm">
-              Confidential crypto donations for builders who are shaping the
-              future.
+    <footer className="bg-secondary/30 py-12 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-10 flex items-center justify-center">
+                <img src="/back.png" alt="Logo" />
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              The simplest way for builders to receive crypto donations from their community.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Always free, always yours.
             </p>
           </div>
 
           <div>
-            <h4 className="mb-6 text-lg">Platform</h4>
-            <div className="space-y-4 text-base">
-              <a
-                href="#"
-                className="text-gray-300 hover:text-white block transition-colors"
-              >
-                Browse Builders
-              </a>
-              <a
-                href="#"
-                className="text-gray-300 hover:text-white block transition-colors"
-              >
-                How It Works
-              </a>
-              <a
-                href="#"
-                className="text-gray-300 hover:text-white block transition-colors"
-              >
-                Privacy Policy
-              </a>
-            </div>
+            <h4 className="mb-4">Product</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><a href="#" className="hover:text-foreground transition-colors">Features</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">How it Works</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">Pricing</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">FAQ</a></li>
+            </ul>
           </div>
 
           <div>
-            <h4 className="mb-6 text-lg">Community</h4>
-            <div className="space-y-4 text-base">
-              <a
-                href="#"
-                className="text-gray-300 hover:text-white block transition-colors"
-              >
-                Discord
-              </a>
-              <a
-                href="#"
-                className="text-gray-300 hover:text-white block transition-colors"
-              >
-                Twitter
-              </a>
-              <a
-                href="#"
-                className="text-gray-300 hover:text-white block transition-colors"
-              >
-                GitHub
-              </a>
-            </div>
+            <h4 className="mb-4">Developers</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><a href="#" className="hover:text-foreground transition-colors">API Documentation</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">Widget Integration</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">GitHub</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">Discord</a></li>
+            </ul>
           </div>
 
           <div>
-            <h4 className="mb-6 text-lg">Connect</h4>
-            <div className="flex space-x-6">
-              <a
-                href="#"
-                className="text-gray-300 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
-              >
-                <Github className="h-6 w-6" />
-              </a>
-              <a
-                href="#"
-                className="text-gray-300 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
-              >
-                <Twitter className="h-6 w-6" />
-              </a>
-              <a
-                href="#"
-                className="text-gray-300 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
-              >
-                <MessageCircle className="h-6 w-6" />
-              </a>
-            </div>
+            <h4 className="mb-4">Support</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><a href="#" className="hover:text-foreground transition-colors">Help Center</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">Contact</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">Status</a></li>
+              <li><a href="#" className="hover:text-foreground transition-colors">Community</a></li>
+            </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-700 pt-10">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-base">
-              © 2025 Back. Built for the crypto community.
-            </p>
-            <p className="text-gray-400 text-base mt-4 md:mt-0">
-              Ethereum • Est. 2025
-            </p>
+        <Separator className="my-8" />
+
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-6 text-sm text-muted-foreground">
+            <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-foreground transition-colors">Cookie Policy</a>
           </div>
+          <p className="text-sm text-muted-foreground">
+            © 2025 Back. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
