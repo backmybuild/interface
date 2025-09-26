@@ -112,7 +112,7 @@ export const DonationInfo: NextPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
 
-  const [amount, setAmount] = useState("5");
+  const [amount, setAmount] = useState("15");
   const [tokens, setTokens] = useState<Token[]>([]);
   const amt = useMemo(() => (amount ? Number(amount) : NaN), [amount]);
   const isValid = !Number.isNaN(amt) && amt > 0;
@@ -303,7 +303,7 @@ export const DonationInfo: NextPage = () => {
 
             {/* quick amounts */}
             <div className="flex gap-2 mb-3">
-              {[1, 5, 10].map((val) => {
+              {[5, 15, 25].map((val) => {
                 const selected = amount === val.toString();
                 return (
                   <button
