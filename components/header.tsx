@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "./ui/button";
 import { Menu, BookOpen } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 export function Header() {
@@ -31,10 +32,12 @@ export function Header() {
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
-            <Button className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4" />
-              Documentation
-            </Button>
+            <Link href="https://docs.backmybuild.com/" target="_blank" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              <Button className="flex items-center gap-2 hover:cursor-pointer">
+                <BookOpen className="w-4 h-4" />
+                Documentation
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
