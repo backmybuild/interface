@@ -11,12 +11,12 @@ import {
   arbitrum,
   base,
   bsc,
-  form,
   mainnet,
   optimism,
   polygon,
 } from "viem/chains";
 import { useAppKit } from "@reown/appkit/react";
+import toast from "react-hot-toast";
 
 export type Profile = {
   displayName: string;
@@ -216,10 +216,7 @@ export const DonationInfo: NextPage = () => {
   }, [amt, selectedToken]);
 
   const handleTip = async (token: Token, amountUi: string) => {
-    console.log("Tipping", {
-      token,
-      amount: parseUnits(amountUi, token.decimals),
-    });
+    toast.success("Feature coming soon!");
   };
 
   if (isLoading) {
