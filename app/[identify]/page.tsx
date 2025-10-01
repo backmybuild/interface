@@ -36,7 +36,7 @@ export const generateMetadata = async (
         icon: data[0].avatar as string,
       },
     };
-  } catch (error) {
+  } catch (_) {
     return {
       title: "Back",
       description: "Everything you are. In one, simple link in bio.",

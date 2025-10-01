@@ -1,15 +1,14 @@
 "use client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createAppKit } from "@reown/appkit/react";
-import { baseSepolia, base } from "@reown/appkit/networks";
+import { base, mainnet, optimism, arbitrum, polygon, bsc, linea, scroll, zksync } from "@reown/appkit/networks";
 import React, { type ReactNode } from "react";
 import { cookieToInitialState, WagmiProvider, type Config } from "wagmi";
 import { cookieStorage, createStorage } from "@wagmi/core";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import { ProgressProvider } from "@bprogress/next/app";
 
 const projectId = process.env.NEXT_PUBLIC_PROJECT_ID || "";
-const networks = [baseSepolia, base];
+const networks = [base, mainnet, optimism, arbitrum, polygon, bsc, linea, scroll, zksync];
 
 //Set up the Wagmi Adapter (Config)
 const wagmiAdapter = new WagmiAdapter({
@@ -38,7 +37,7 @@ const metadata = {
 createAppKit({
   adapters: [wagmiAdapter],
   projectId,
-  networks: [baseSepolia, base],
+  networks: networks as any,
   defaultNetwork: base,
   metadata: metadata,
   themeMode: "light",
