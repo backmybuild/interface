@@ -1,9 +1,9 @@
 "use server";
 import { Metadata, NextPage, ResolvingMetadata } from "next";
-import axios from "axios";
 import { headers } from "next/headers"; // added
 import { DonationInfo } from "./info";
 import WalletProvider from "./wallet-provider";
+import { getUserInfo } from "./get-user-info";
 
 type Props = {
   params: Promise<{ identify: string }>;
@@ -16,24 +16,22 @@ export const generateMetadata = async (
 ): Promise<Metadata> => {
   try {
     const { identify } = await params;
-    const { data } = await axios.get(
-      `https://api.web3.bio/profile/${identify}`
-    );
-    if (data.error) {
+    const userInfo = await getUserInfo(identify);
+    if (!userInfo) {
       return {
         title: "Back",
         description: "Everything you are. In one, simple link in bio.",
         icons: {
           icon: "/back-square-logo.png",
         },
-      };
+      }
     }
 
     return {
-      title: data[0].displayName as string,
-      description: data[0].description as string,
+      title: userInfo.displayName || identify,
+      description: userInfo.description || "Everything you are. In one, simple link in bio.",
       icons: {
-        icon: data[0].avatar as string,
+        icon: userInfo.avatar || "/back-square-logo.png",
       },
     };
   } catch (_) {

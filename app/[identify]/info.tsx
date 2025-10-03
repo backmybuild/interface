@@ -20,14 +20,7 @@ import {
 } from "viem/chains";
 import { useAppKit } from "@reown/appkit/react";
 import toast from "react-hot-toast";
-
-export type Profile = {
-  displayName: string;
-  address: Address;
-  description: string;
-  avatar: string;
-  socials?: string[];
-};
+import { getUserInfo, UserInfo } from "./get-user-info";
 
 type Token = {
   symbol: string;
@@ -133,7 +126,7 @@ export const DonationInfo: NextPage = () => {
   const { open } = useAppKit();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<UserInfo | null>(null);
   const [sendStep, setSendStep] = useState<string | null>(null);
 
   const [amount, setAmount] = useState("15");
@@ -183,31 +176,8 @@ export const DonationInfo: NextPage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const { data } = await axios.get(
-          `https://api.web3.bio/profile/${identify}`
-        );
-
-        const allLinks: string[] = [];
-        for (const item of data) {
-          if (!item.links) continue;
-          for (const [, val] of Object.entries(item.links)) {
-            const handle = val as any;
-            if (handle?.link) allLinks.push(handle.link);
-          }
-        }
-        const uniqueLinks = Array.from(
-          new Map(allLinks.map((l) => [l, l])).values()
-        );
-
-        const p: Profile = {
-          address: (data[0].address as Address) || identify,
-          displayName: (data[0].displayName as string) || identify,
-          avatar: data[0].avatar as string,
-          description: data[0].description as string,
-          socials: uniqueLinks.splice(0, 3),
-        };
-
-        setProfile(p);
+        const userInfo = await getUserInfo(identify);
+        setProfile(userInfo);
       } catch {
         setProfile(null);
       } finally {
