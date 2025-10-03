@@ -37,7 +37,7 @@ const getUserInfoFromWeb3Bio = async (identify: string): Promise<UserInfo | null
     const userInfo: UserInfo = {
       address: (data[0].address as Address) || identify,
       displayName: (data[0].displayName as string) || identify,
-      avatar: data[0].avatar as string,
+      avatar: data[0].avatar || `https://effigy.im/a/${data[0].address}.png`,
       description: data[0].description as string,
       socials: uniqueLinks.splice(0, 3),
     };
