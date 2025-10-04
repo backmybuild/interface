@@ -1,79 +1,33 @@
 "use client";
 import { Button } from "./ui/button";
-import { Menu, BookOpen } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import Image from "next/image";
 
 export const Header: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b">
-      <div className="max-w-6xl mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-15 items-center justify-center">
-              <img src="/back.png" alt="Logo" />
-            </div>
-            {/* <span className="text-xl"></span> */}
-          </div>
+    <header className="absolute top-0 left-0 right-0 z-30 bg-white/80 backdrop-blur flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
+      {/* Logo */}
+      <Link href="/" className="flex items-center gap-2 hover:opacity-80">
+        <Image
+          src="/back.png"
+          alt="BackMyBuild Logo"
+          width={32}
+          height={32}
+          className="h-6 sm:h-8 w-auto"
+        />
+        <span className="font-semibold tracking-tight text-gray-900 text-base sm:text-lg">
+          BackMyBuild
+        </span>
+      </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
-              Features
-            </Link>
-            <Link href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
-              How it Works
-            </Link>
-            <Link href="#FAQ" className="text-muted-foreground hover:text-foreground transition-colors">
-              FAQs
-            </Link>
-          </nav>
-
-          <div className="hidden md:flex items-center gap-4">
-            <Link href="https://docs.backmybuild.com" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-              <Button className="flex items-center gap-2 hover:cursor-pointer">
-                <BookOpen className="w-4 h-4 inline-block mr-1" />
-                Documentation
-              </Button>
-            </Link>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            className="md:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <Menu className="w-5 h-5" />
-          </Button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t pt-4">
-            <nav className="flex flex-col gap-4">
-              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
-                Features
-              </a>
-              <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
-                How it Works
-              </a>
-              <a href="#faq" className="text-muted-foreground hover:text-foreground transition-colors">
-                FAQ
-              </a>
-              <div className="mt-4">
-                <Button className="w-full justify-start flex items-center gap-2">
-                  <BookOpen className="w-4 h-4" />
-                  Documentation
-                </Button>
-              </div>
-            </nav>
-          </div>
-        )}
-      </div>
+      {/* Documentation button */}
+      <Link href="https://docs.backmybuild.com" className="hover:opacity-80 shrink-0">
+        <Button className="flex items-center gap-2 text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2">
+          <BookOpen className="w-4 h-4" />
+          Documentation
+        </Button>
+      </Link>
     </header>
   );
 }

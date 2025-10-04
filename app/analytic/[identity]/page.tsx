@@ -14,6 +14,7 @@ import {
 import { fetchUserAnalytics } from "./fetch-analytics";
 import { useParams } from "next/navigation";
 import { getUserInfo } from "../../get-user-info";
+import { Header } from "@components/header";
 
 // ---------- Types ----------
 type Tip = {
@@ -203,27 +204,12 @@ const AnalyticPage: NextPage = () => {
       : "0.00";
 
   return (
-    <main className="min-h-svh bg-gray-50 text-gray-900">
+    <main className="min-h-svh">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-gray-200">
-        <div className="mx-auto max-w-6xl px-4 py-4 flex flex-col sm:flex-row items-center gap-3">
-          <div className="flex items-center gap-3 w-full">
-            <Link href="/" className="hover:opacity-80">
-              <div className="w-15 items-center justify-center">
-                <img src="/back.png" alt="Logo" />
-              </div>
-            </Link>
-          </div>
-          <div className="w-full sm:max-w-md text-right">
-            <h1 className="text-lg sm:text-xl font-semibold">
-              {analytics.user.displayName}&apos;s Analytics
-            </h1>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Content */}
-      <div className="mx-auto max-w-6xl px-4 py-6">
+      <div className="mx-auto max-w-6xl px-4 py-6 mt-20">
         {/* User summary */}
         <section className="mb-6">
           <div className="flex flex-wrap items-center gap-4">
