@@ -1,9 +1,13 @@
 "use client";
 import React, { useMemo, useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
+import { NextPage } from "next";
+import { BookOpen } from "lucide-react";
+import { Button } from "@components/ui/button";
 
-export default function BackMyBuildLanding() {
+const LandingPage: NextPage = () => {
   const [handle, setHandle] = useState("");
   const [focused, setFocused] = useState(false);
   const isValid = useMemo(() => handle.trim().length >= 2, [handle]);
@@ -50,16 +54,18 @@ export default function BackMyBuildLanding() {
             whileHover={{ scale: 1.05 }}
           >
             {item.kind === "name" ? (
+              <Link href={`/${item.text}`}>
               <div className="flex items-center gap-2 rounded-full border border-gray-100 bg-white/80 px-4 py-2 text-sm sm:text-base text-gray-700 shadow-[0_4px_16px_rgba(0,0,0,0.06)] backdrop-blur-md group-hover:font-semibold">
-                <img src={item.avatar} alt="avatar" className="h-6 w-6 sm:h-8 sm:w-8 rounded-full" />
+                <Image src={item.avatar} alt="avatar" height="6" width="6" className="h-6 w-6 sm:h-8 sm:w-8 rounded-full" />
                 <span>{item.text}</span>
               </div>
+              </Link>
             ) : (
               <div className="flex items-center gap-2 rounded-full border border-gray-100 bg-white/90 px-4 py-2 text-sm sm:text-base text-gray-700 shadow-[0_4px_16px_rgba(0,0,0,0.08)] backdrop-blur-md group-hover:font-semibold">
-                <img src={item.avatarFrom} alt="from" className="h-6 w-6 sm:h-8 sm:w-8 rounded-full" />
+                <Image src={item.avatarFrom} alt="from" height="6" width="6" className="h-6 w-6 sm:h-8 sm:w-8 rounded-full" />
                 <span>{item.from}</span>
                 <span className="text-gray-400">→</span>
-                <img src={item.avatarTo} alt="to" className="h-6 w-6 sm:h-8 sm:w-8 rounded-full" />
+                <Image src={item.avatarTo} alt="to" height="6" width="6" className="h-6 w-6 sm:h-8 sm:w-9 rounded-full" />
                 <span>{item.to}</span>
                 <span className="ml-2 rounded-full bg-emerald-50 text-emerald-700 px-2 py-0.5 text-xs sm:text-sm font-semibold">
                   {item.amount}
@@ -73,12 +79,16 @@ export default function BackMyBuildLanding() {
       {/* Header */}
       <header className="absolute top-0 left-0 right-0 flex flex-col sm:flex-row justify-between items-center px-4 sm:px-6 py-4 z-10 text-sm sm:text-base gap-2 sm:gap-0">
         <div className="flex items-center gap-2">
-          <img src="/back-square-logo.png" alt="BackMyBuild Logo" className="h-6 w-6 sm:h-8 sm:w-8" />
+          <Image src="/back-square-logo.png" height="6" width="6" alt="BackMyBuild Logo" className="h-6 w-6 sm:h-8 sm:w-8" />
           <span className="font-semibold tracking-tight text-gray-900">BackMyBuild</span>
         </div>
         <div className="flex items-center flex-wrap justify-center gap-3 sm:gap-6">
-          <span className="font-medium text-gray-600">built by builders for builders</span>
-          <Link href="https://docs.backmybuild.com" className="text-blue-600 hover:underline whitespace-nowrap">Documents</Link>
+          <Link href="https://docs.backmybuild.com" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <Button className="flex items-center gap-2 hover:cursor-pointer">
+              <BookOpen className="w-4 h-4 inline-block mr-1" />
+              Documentation
+            </Button>
+          </Link>
         </div>
       </header>
 
@@ -128,3 +138,5 @@ export default function BackMyBuildLanding() {
     </main>
   );
 }
+
+export default LandingPage;
