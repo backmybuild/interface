@@ -1,242 +1,130 @@
 "use client";
-import React, { useMemo, useState } from "react";
-
-// Single-file, drop-in landing page component for Next.js + Tailwind.
-// No external UI libs or animations (per your previous preferences).
-// Replace handlers (onClaim, onSearch) with your real logic.
+import React, { useMemo, useState, useCallback } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
 
 export default function BackMyBuildLanding() {
   const [handle, setHandle] = useState("");
   const [focused, setFocused] = useState(false);
   const isValid = useMemo(() => handle.trim().length >= 2, [handle]);
 
-  const onClaim = () => {
-    // TODO: route to your claim flow, e.g. /claim?query=
+  const onClaim = useCallback(() => {
     if (!isValid) return;
-    window.location.href = `/claim?query=${encodeURIComponent(handle.trim())}`;
+    const h = handle.trim().replace(/^@/, "");
+    window.location.href = `/${encodeURIComponent(h)}`;
+  }, [handle, isValid]);
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") onClaim();
   };
 
-  const suggestionPills = [
-    "imduchuyyy.eth",
-    "jesse.base.eth",
-    "@imduchuyyy",
-    "0x4fff...a62f",
+  // --- Floating Items ---
+  type FloatingName = { kind: "name"; text: string; avatar: string; top: string; left: string; delay?: number };
+  type FloatingTip = { kind: "tip"; from: string; to: string; amount: string; avatarFrom: string; avatarTo: string; top: string; left: string; delay?: number };
+  const floatingItems: Array<FloatingName | FloatingTip> = [
+    { kind: "name", text: "vitalik.eth", avatar: avatar("vitalik.eth"), top: "10%", left: "65%", delay: 0.1 },
+    { kind: "name", text: "frankfurt.base.eth", avatar: avatar("frankfurt"), top: "80%", left: "40%", delay: 0.2 },
+    { kind: "name", text: "alice.base.eth", avatar: avatar("alice"), top: "18%", left: "45%", delay: 0.3 },
+    { kind: "name", text: "satoshi.base.eth", avatar: avatar("satoshi"), top: "60%", left: "10%", delay: 0.4 },
+    { kind: "name", text: "wilsoncusack.base.eth", avatar: avatar("wilsoncusack"), top: "65%", left: "70%", delay: 0.5 },
+    { kind: "tip", from: "imduchuyyy.eth", to: "minhtuong.eth", amount: "$10", avatarFrom: avatar("imduchuyyy"), avatarTo: avatar("minhtuong"), top: "40%", left: "70%", delay: 0.2 },
+    { kind: "tip", from: "0x4fff...a62f", to: "wilsoncusack.base.eth", amount: "$5", avatarFrom: avatar("0x4fff"), avatarTo: avatar("wilsoncusack"), top: "25%", left: "5%", delay: 0.6 },
   ];
 
+  function avatar(seed: string) {
+    return `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(seed)}`;
+  }
+
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      <Header />
+    <main className="relative min-h-svh bg-white text-gray-900 overflow-hidden flex flex-col items-center justify-center">
+      {/* Animated floating items (hidden on small screens) */}
+      <div className="absolute inset-0 overflow-hidden hidden sm:block">
+        {floatingItems.map((item, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: [0.25, 0.9, 0.25], y: [0, -8, 0] }}
+            transition={{ duration: 6 + (i % 3), delay: item.delay ?? 0, repeat: Infinity, repeatType: "mirror" }}
+            className="absolute group cursor-pointer"
+            style={{ top: item.top, left: item.left }}
+            whileHover={{ scale: 1.05 }}
+          >
+            {item.kind === "name" ? (
+              <div className="flex items-center gap-2 rounded-full border border-gray-100 bg-white/80 px-4 py-2 text-sm sm:text-base text-gray-700 shadow-[0_4px_16px_rgba(0,0,0,0.06)] backdrop-blur-md group-hover:font-semibold">
+                <img src={item.avatar} alt="avatar" className="h-6 w-6 sm:h-8 sm:w-8 rounded-full" />
+                <span>{item.text}</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 rounded-full border border-gray-100 bg-white/90 px-4 py-2 text-sm sm:text-base text-gray-700 shadow-[0_4px_16px_rgba(0,0,0,0.08)] backdrop-blur-md group-hover:font-semibold">
+                <img src={item.avatarFrom} alt="from" className="h-6 w-6 sm:h-8 sm:w-8 rounded-full" />
+                <span>{item.from}</span>
+                <span className="text-gray-400">→</span>
+                <img src={item.avatarTo} alt="to" className="h-6 w-6 sm:h-8 sm:w-8 rounded-full" />
+                <span>{item.to}</span>
+                <span className="ml-2 rounded-full bg-emerald-50 text-emerald-700 px-2 py-0.5 text-xs sm:text-sm font-semibold">
+                  {item.amount}
+                </span>
+              </div>
+            )}
+          </motion.div>
+        ))}
+      </div>
 
-      {/* HERO */}
-      <section className="relative overflow-hidden">
-        {/* bg flair */}
-        <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute -top-24 left-1/2 h-[520px] w-[1200px] -translate-x-1/2 rounded-full blur-3xl opacity-40 bg-gradient-to-r from-sky-200 via-cyan-100 to-indigo-200" />
+      {/* Header */}
+      <header className="absolute top-0 left-0 right-0 flex flex-col sm:flex-row justify-between items-center px-4 sm:px-6 py-4 z-10 text-sm sm:text-base gap-2 sm:gap-0">
+        <div className="flex items-center gap-2">
+          <img src="/back-square-logo.png" alt="BackMyBuild Logo" className="h-6 w-6 sm:h-8 sm:w-8" />
+          <span className="font-semibold tracking-tight text-gray-900">BackMyBuild</span>
         </div>
+        <div className="flex items-center flex-wrap justify-center gap-3 sm:gap-6">
+          <span className="font-medium text-gray-600">built by builders for builders</span>
+          <Link href="https://docs.backmybuild.com" className="text-blue-600 hover:underline whitespace-nowrap">Documents</Link>
+        </div>
+      </header>
 
-        <div className="mx-auto max-w-6xl px-4 pb-16 pt-24 sm:pt-28">
-          <div className="flex flex-col items-center text-center gap-6">
-            <Badge>Live on Base</Badge>
-            <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-              Claim a beautiful onchain profile in seconds
-            </h1>
-            <p className="max-w-2xl text-base sm:text-lg text-gray-600">
-              BackMyBuild lets anyone create a lightweight, link-in-bio style page
-              that receives tips in any token from any chain—auto‑settled to USDC on Base.
+      {/* Hero Section */}
+      <section className="relative z-10 flex flex-col items-center text-center px-4 sm:px-6 mt-16 sm:mt-20">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+          <div className="flex flex-col items-center gap-1">
+            <h1 className="text-2xl sm:text-4xl font-semibold tracking-tight leading-tight">Simplify onchain tipping.</h1>
+            <p className="text-gray-500 text-xs sm:text-base max-w-sm sm:max-w-xl">
+              Claim your BackMyBuild name — receive tips from any chain, any token.
             </p>
+          </div>
 
-            {/* Claim input */}
-            <div className={`w-full max-w-2xl rounded-2xl border ${focused ? "border-gray-900 shadow-lg" : "border-gray-300 shadow-sm"} bg-white p-2 transition-shadow`}>
-              <div className="flex items-center gap-2">
+          {/* Center Input */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.8 }} className="mt-6 sm:mt-10 w-full">
+            <div className="relative mx-auto w-full max-w-xs sm:max-w-2xl">
+              <div className={`relative flex items-center rounded-full border bg-gradient-to-r from-sky-100 via-white to-emerald-100 shadow-md sm:shadow-lg transition-all duration-300 ${focused ? "ring-2 ring-sky-300" : "border-gray-200"}`}>
                 <input
+                  type="text"
+                  placeholder="Search for a name..."
                   value={handle}
                   onChange={(e) => setHandle(e.target.value)}
                   onFocus={() => setFocused(true)}
                   onBlur={() => setFocused(false)}
-                  placeholder="Wallet / ENS / Base name / Warpcast @ / URL"
-                  className="flex-1 bg-transparent px-3 py-3 text-base outline-none placeholder:text-gray-400"
+                  onKeyDown={onKeyDown}
+                  className="flex-1 bg-transparent text-sm sm:text-lg md:text-xl px-4 sm:px-6 py-3 sm:py-4 rounded-full outline-none placeholder:text-gray-400"
                 />
                 <button
                   onClick={onClaim}
                   disabled={!isValid}
-                  className="rounded-xl bg-gray-900 px-4 py-3 text-white disabled:opacity-40"
+                  className="absolute right-2 sm:right-4 flex items-center justify-center h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gradient-to-br from-gray-900 to-gray-700 text-white hover:scale-[1.05] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Get your page
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="h-4 w-4 sm:h-5 sm:w-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 3a7.5 7.5 0 006.15 13.65z" />
+                  </svg>
                 </button>
               </div>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                {suggestionPills.map((x) => (
-                  <button
-                    key={x}
-                    onClick={() => setHandle(x)}
-                    className="rounded-full border border-gray-200 px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-50"
-                  >
-                    {x}
-                  </button>
-                ))}
-              </div>
             </div>
+          </motion.div>
+        </motion.div>
 
-            {/* Social proof row (avatars or logos) */}
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-sm text-gray-500">
-              <span className="font-medium text-gray-700">Works with</span>
-              <LogoPill label="Farcaster" />
-              <LogoPill label="ENS / Basenames" />
-              <LogoPill label="USDC" />
-              <LogoPill label="Ethereum" />
-              <LogoPill label="Base" />
-            </div>
-          </div>
-        </div>
+        {/* Scroll Hint */}
+        <motion.div initial={{ y: 10 }} animate={{ y: [0, 4, 0] }} transition={{ delay: 1, duration: 2, repeat: Infinity }} className="mt-6 text-[10px] sm:text-xs flex items-center gap-1 text-gray-500">
+          <span>ENS, Base Name, Farcaster handlers, and more...</span>
+        </motion.div>
       </section>
-
-      {/* Feature triptych */}
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <FeatureCard
-            title="Build your onchain identity"
-            desc="Pick a memorable handle and unify your links, wallet, and socials in one place."
-            imgAlt="Identity"
-          />
-          <FeatureCard
-            title="Simplify tips & payouts"
-            desc="Receive tips in any token on any chain—settled to Base automatically."
-            imgAlt="Tips"
-          />
-          <FeatureCard
-            title="Connect & collaborate"
-            desc="Make it easy for supporters and other builders to discover and back you."
-            imgAlt="Connect"
-          />
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
-        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">How it works</h2>
-        <ol className="mt-6 grid gap-4 sm:grid-cols-3">
-          <StepCard step={1} title="Claim" desc="Enter any address, ENS / basename, or @handle to spin up your page." />
-          <StepCard step={2} title="Share" desc="Drop your link anywhere—your page fetches onchain + social data automatically." />
-          <StepCard step={3} title="Get backed" desc="Fans tip in their preferred tokens; you receive on Base, clean and simple." />
-        </ol>
-      </section>
-
-      {/* Promo / CTA */}
-      <section className="mx-auto max-w-6xl px-4 pb-20">
-        <div className="rounded-3xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white p-8 sm:p-10">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h3 className="text-xl sm:text-2xl font-semibold">Free forever to claim</h3>
-              <p className="text-gray-600">Custom themes and cross‑chain swaps coming soon.</p>
-            </div>
-            <div className="flex gap-3">
-              <a href="#faq" className="rounded-xl border border-gray-300 px-4 py-3 text-sm">Read FAQ</a>
-              <button onClick={onClaim} disabled={!isValid} className="rounded-xl bg-gray-900 px-5 py-3 text-sm font-medium text-white disabled:opacity-40">Get your page</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="border-t border-gray-200 bg-gray-50/60 py-12 sm:py-16">
-        <div className="mx-auto max-w-4xl px-4">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">FAQs</h2>
-          <div className="mt-8 divide-y divide-gray-200 rounded-2xl border border-gray-200 bg-white">
-            <FaqItem q="What is BackMyBuild?" a="A link‑in‑bio style profile for builders and creators to receive onchain tips. No setup, just paste a handle and go." />
-            <FaqItem q="Which tokens/chains can supporters use?" a="Any token on any supported chain; we swap/bridge to settle on Base behind the scenes so you receive cleanly." />
-            <FaqItem q="Is claiming a page free?" a="Yes. Claiming is free. We may charge small service fees only when a swap/bridge is required for a tip." />
-            <FaqItem q="Do I need ENS or a Basename?" a="No, but they help. You can claim with an address, ENS/basename, Farcaster username, or standard URL." />
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-    </div>
-  );
-}
-
-function Header() {
-  return (
-    <header className="sticky top-0 z-40 w-full backdrop-blur supports-[backdrop-filter]:bg-white/70">
-      <div className="mx-auto max-w-6xl px-4">
-        <div className="flex h-16 items-center justify-between">
-          <a href="/" className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-xl bg-gray-900" />
-            <span className="text-sm font-semibold">BackMyBuild</span>
-          </a>
-          <nav className="hidden items-center gap-6 text-sm text-gray-600 sm:flex">
-            <a href="#features" className="hover:text-gray-900">Features</a>
-            <a href="#faq" className="hover:text-gray-900">FAQ</a>
-            <a href="https://backmybuild.com" className="rounded-xl bg-gray-900 px-4 py-2 text-white">Launch app</a>
-          </nav>
-          <a href="https://backmybuild.com" className="sm:hidden rounded-xl bg-gray-900 px-3 py-2 text-white text-sm">Launch</a>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-function Badge({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-gray-700">
-      <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" />
-      {children}
-    </span>
-  );
-}
-
-function LogoPill({ label }: { label: string }) {
-  return (
-    <span className="rounded-full border border-gray-200 bg-white px-3 py-1 text-xs text-gray-700">{label}</span>
-  );
-}
-
-function FeatureCard({ title, desc, imgAlt }: { title: string; desc: string; imgAlt: string }) {
-  return (
-    <div className="rounded-3xl border border-gray-200 bg-white p-6">
-      <div className="mb-4 h-40 w-full rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50" aria-label={imgAlt} />
-      <h3 className="text-lg font-semibold">{title}</h3>
-      <p className="mt-2 text-sm text-gray-600">{desc}</p>
-    </div>
-  );
-}
-
-function StepCard({ step, title, desc }: { step: number; title: string; desc: string }) {
-  return (
-    <li className="rounded-2xl border border-gray-200 bg-white p-5">
-      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-gray-300 text-xs font-semibold">{step}</span>
-      <h4 className="mt-3 text-base font-semibold">{title}</h4>
-      <p className="mt-1 text-sm text-gray-600">{desc}</p>
-    </li>
-  );
-}
-
-function FaqItem({ q, a }: { q: string; a: string }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <details open={open} onToggle={() => setOpen(!open)} className="group p-5">
-      <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
-        <span className="text-base font-medium text-gray-900">{q}</span>
-        <span className="ml-2 inline-flex h-6 w-6 items-center justify-center rounded-full border border-gray-300 text-xs text-gray-600 group-open:rotate-45 transition-transform">+</span>
-      </summary>
-      <p className="mt-3 text-sm leading-6 text-gray-600">{a}</p>
-    </details>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="border-t border-gray-200">
-      <div className="mx-auto max-w-6xl px-4 py-10 text-sm text-gray-600">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} BackMyBuild. Built by builders for builders.</p>
-          <div className="flex items-center gap-4">
-            <a className="hover:text-gray-900" href="https://x.com/">Twitter</a>
-            <a className="hover:text-gray-900" href="https://warpcast.com/">Farcaster</a>
-            <a className="hover:text-gray-900" href="mailto:hello@backmybuild.com">Email</a>
-          </div>
-        </div>
-      </div>
-    </footer>
+    </main>
   );
 }

@@ -4,7 +4,7 @@ import { Menu, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-export function Header() {
+export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -20,21 +20,21 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
               Features
-            </a>
-            <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
+            </Link>
+            <Link href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">
               How it Works
-            </a>
-            <a href="#faq" className="text-muted-foreground hover:text-foreground transition-colors">
-              FAQ
-            </a>
+            </Link>
+            <Link href="#FAQ" className="text-muted-foreground hover:text-foreground transition-colors">
+              FAQs
+            </Link>
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
-            <Link href="https://docs.backmybuild.com/" target="_blank" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="https://docs.backmybuild.com" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               <Button className="flex items-center gap-2 hover:cursor-pointer">
-                <BookOpen className="w-4 h-4" />
+                <BookOpen className="w-4 h-4 inline-block mr-1" />
                 Documentation
               </Button>
             </Link>

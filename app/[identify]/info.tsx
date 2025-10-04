@@ -3,7 +3,7 @@ import Link from "next/link";
 import { NextPage } from "next";
 import { useParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
-import { Address, formatUnits, getAddress } from "viem";
+import { Address, Chain, createPublicClient, erc20Abi, formatUnits, getAddress, http, parseUnits, PublicClient } from "viem";
 import {
   arbitrum,
   base,
@@ -15,11 +15,13 @@ import {
   scroll,
   zksync,
 } from "viem/chains";
-import { useAccount } from "wagmi";
+import { useAccount, useSwitchChain, useWriteContract, useSendTransaction } from "wagmi";
 import { useAppKit } from "@reown/appkit/react";
 import { SocialIcon } from "@components/ui/social-icon";
-import { getUserInfo, UserInfo } from "./get-user-info";
-import { userInfo } from "os";
+import { getUserInfo, UserInfo } from "../get-user-info";
+import { countView } from "./count-view";
+import toast from "react-hot-toast";
+import { createTip } from "./create-tip";
 
 /** ---------- Types ---------- */
 type Token = {
@@ -36,6 +38,7 @@ type Token = {
 /** ---------- Consts ---------- */
 const BUNGEE_API_BASE_URL = "https://public-backend.bungee.exchange";
 const USDC_BASE: Address = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
+const FEE_TAKER: Address = "0x4fff0f708c768a46050f9b96c46c265729d1a62f"
 
 const CHAIN_BADGE: Record<number, { label: string; bg: string }> = {
   [mainnet.id]: { label: "ETH", bg: "bg-blue-600" },
@@ -48,6 +51,18 @@ const CHAIN_BADGE: Record<number, { label: string; bg: string }> = {
   [linea.id]: { label: "LINEA", bg: "bg-gray-800" },
   [scroll.id]: { label: "SCROLL", bg: "bg-gray-700" },
 };
+
+const CHAIN_CLIENT: Record<number, Chain> = {
+  [mainnet.id]: mainnet,
+  [base.id]: base,
+  [bsc.id]: bsc,
+  [polygon.id]: polygon,
+  [optimism.id]: optimism,
+  [arbitrum.id]: arbitrum,
+  [zksync.id]: zksync,
+  [scroll.id]: scroll,
+  [linea.id]: linea,
+}
 
 /** ---------- UI helpers ---------- */
 const ChainBadge = ({ chainId }: { chainId: number }) => {
@@ -105,6 +120,9 @@ export const DonationInfo: NextPage = () => {
   const identify = params.identify as string;
 
   const { address, isConnected } = useAccount();
+  const { switchChainAsync } = useSwitchChain();
+  const { writeContractAsync } = useWriteContract();
+  const { sendTransactionAsync } = useSendTransaction();
   const { open } = useAppKit();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -125,6 +143,8 @@ export const DonationInfo: NextPage = () => {
 
   // Inside Crypto tab: show/hide token list
   const [showTokenList, setShowTokenList] = useState(false);
+  const [sendStep, setSendStep] = useState<string | null>(null);
+
 
   const amt = useMemo(() => (amount ? Number(amount) : NaN), [amount]);
   const isValid = !Number.isNaN(amt) && amt > 0;
@@ -157,6 +177,12 @@ export const DonationInfo: NextPage = () => {
       }
     };
     if (identify) fetchProfile();
+  }, [identify]);
+
+  useEffect(() => {
+    (async () => {
+      await countView(identify);
+    })()
   }, [identify]);
 
   const fetchDonorTokenBalances = async (donorAddress: Address) => {
@@ -223,18 +249,173 @@ export const DonationInfo: NextPage = () => {
     console.log("Pay with card:", { amount, senderName, note, identify });
   };
 
-  const handleSendWithCrypto = () => {
-    // TODO: wire your on-chain flow here (quote/build/tx/status)
+  const requestQuote = async (token: Token, amountUi: string) => {
+    const url = `${BUNGEE_API_BASE_URL}/api/v1/bungee/quote`;
+    const quoteParamsNative = {
+      userAddress: address,
+      feeTakerAddress: FEE_TAKER,
+      feeBps: "200", // 2%
+      originChainId: token.chainId,
+      destinationChainId: base.id,
+      inputToken: token.address,
+      inputAmount: parseUnits(amountUi, token.decimals),
+      receiverAddress: profile?.address,
+      outputToken: getAddress(USDC_BASE),
+      enableManual: true,
+      excludeBridges: "cctp",
+      refuel: false
+    };
+
+
+    const queryParams = new URLSearchParams(quoteParamsNative as any);
+    const fullUrl = `${url}?${queryParams}`;
+
+    const response = await fetch(fullUrl);
+    const data = await response.json();
+    const serverReqId = response.headers.get("server-req-id");
+    if (!data.success) {
+      throw new Error(
+        `Quote error: ${data.statusCode}: ${data.message}. server-req-id: ${serverReqId}`
+      );
+    }
+
+    if (!data.result.manualRoutes || data.result.manualRoutes.length === 0) {
+      throw new Error(`No route found.`);
+    }
+
+    const quote = data.result.manualRoutes[0]
+
+    const quoteId = quote.quoteId;
+    const requestType = quote.requestType;
+    let witness = null;
+    let signTypedData = null;
+    if (quote.signTypedData) {
+      signTypedData = quote.signTypedData;
+      if (signTypedData.values && signTypedData.values.witness) {
+        witness = signTypedData.values.witness;
+      }
+    }
+    const approvalData = quote.approvalData;
+    return {
+      quoteId,
+      requestType,
+      witness,
+      signTypedData,
+      approvalData,
+      fullResponse: data,
+    };
+  };
+
+  const buildTransaction = async (quoteId: any) => {
+    const response = await fetch(
+      `${BUNGEE_API_BASE_URL}/api/v1/bungee/build-tx?quoteId=${quoteId}`
+    );
+    const data = await response.json();
+    const serverReqId = response.headers.get("server-req-id");
+
+    if (!data.success) {
+      throw new Error(
+        `Build TX error: ${data.statusCode}: ${data.message}. server-req-id: ${serverReqId}`
+      );
+
+    }
+    return data.result;
+  }
+
+  const checkStatus = async (requestHash: any) => {
+    const response = await fetch(
+      `${BUNGEE_API_BASE_URL}/api/v1/bungee/status?requestHash=${requestHash}`
+    );
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(`Status error: ${data.error?.message || "Unknown error"}`);
+    }
+    return data.result[0];
+  }
+
+
+  const handleSendWithCrypto = async (sendAmount: string) => {
     if (!selectedToken || !isValid) return;
-    console.log("Pay with crypto:", {
-      usdAmount: amount,
-      token: selectedToken,
-      tokenAmount: sendAmount,
-      senderName,
-      note,
-      receiver: profile?.address ? getAddress(profile.address) : undefined,
-      outputToken: USDC_BASE,
-    });
+    try {
+      setSendStep("Switching chain...");
+      await switchChainAsync?.({
+        chainId: selectedToken.chainId,
+      });
+      const chain = CHAIN_CLIENT[selectedToken.chainId];
+      if (!chain) throw new Error("Unsupported chain for token");
+      const client: PublicClient = createPublicClient({
+        chain,
+        transport: http(),
+      }) as PublicClient;
+      setSendStep("Requesting quote...");
+      const { quoteId, requestType, witness, signTypedData, approvalData } = await requestQuote(selectedToken, sendAmount);
+      if (approvalData) {
+        const currentAllowance = await client.readContract({
+          address: approvalData.tokenAddress,
+          abi: erc20Abi,
+          functionName: "allowance",
+          args: [
+            approvalData.userAddress,
+            approvalData.spenderAddress === "0"
+              ? "0x000000000022D473030F116dDEE9F6B43aC78BA3" // Permit2 default
+              : approvalData.spenderAddress,
+          ],
+        });
+
+        if (BigInt(currentAllowance) < BigInt(approvalData.amount)) {
+          console.log("Sufficient allowance already exists.");
+          setSendStep(`Approving ${selectedToken.symbol}...`);
+          const hash = await writeContractAsync({
+            address: approvalData.tokenAddress,
+            abi: erc20Abi,
+            functionName: "approve",
+            args: [
+              approvalData.spenderAddress === "0"
+                ? "0x000000000022D473030F116dDEE9F6B43aC78BA3"
+                : approvalData.spenderAddress,
+              approvalData.amount,
+            ],
+          });
+
+          await toast.promise(
+            client.waitForTransactionReceipt({ hash }),
+            {
+              loading: `Approving ${selectedToken.symbol}...`,
+              success: `Approved ${selectedToken.symbol} for spending.`,
+              error: (err: any) => `Approval error: ${err.message || err.toString()}`,
+            }
+          );
+        }
+      }
+
+      setSendStep("Building transaction...");
+      const { txData } = await buildTransaction(quoteId);
+
+      if (!txData) throw new Error("No transaction data from build-tx");
+
+      setSendStep("Sending transaction...");
+      const txHash = await sendTransactionAsync({
+        to: txData.to,
+        data: txData.data,
+        value: txData.value ? BigInt(txData.value) : undefined,
+      });
+
+      setSendStep("Waiting for confirmation...");
+      await toast.promise(
+        client.waitForTransactionReceipt({ hash: txHash }),
+        {
+          loading: `Sending ${selectedToken.symbol}...`,
+          success: `Sent ${selectedToken.symbol} successfully!`,
+          error: (err: any) => `Transaction error: ${err.message || err.toString()}`,
+        }
+      );
+
+      await createTip(identify, amt, senderName || undefined, note || undefined);
+    } catch (e: any) {
+      console.error("Error in handleTip:", e);
+      toast.error(`Error: ${e.message || e.toString()}`);
+    }
+    setSendStep(null);
   };
 
   /** ----------------- Skeleton & Layout ----------------- */
@@ -322,11 +503,10 @@ export const DonationInfo: NextPage = () => {
                     key={val}
                     type="button"
                     onClick={() => setAmount(val.toString())}
-                    className={`flex-1 rounded-2xl border px-4 py-3 text-sm font-medium transition ${
-                      selected
-                        ? "bg-gray-900 text-white border-gray-900"
-                        : "bg-white text-gray-900 border-gray-300 hover:bg-gray-100"
-                    }`}
+                    className={`flex-1 rounded-2xl border px-4 py-3 text-sm font-medium transition ${selected
+                      ? "bg-gray-900 text-white border-gray-900"
+                      : "bg-white text-gray-900 border-gray-300 hover:bg-gray-100"
+                      }`}
                     aria-pressed={selected}
                   >
                     ${val}
@@ -386,11 +566,10 @@ export const DonationInfo: NextPage = () => {
 
           <div className="mt-2 text-center text-xs">
             <Link
-              href="/dashboard"
-              target="_blank"
+              href={`/analytic/${identify}`}
               className="text-center text-xs underline decoration-dotted hover:opacity-80"
             >
-              Open dashboard to create your own page
+              View analytics page
             </Link>
           </div>
         </section>
@@ -608,11 +787,11 @@ export const DonationInfo: NextPage = () => {
 
                 <button
                   type="button"
-                  onClick={handleSendWithCrypto}
-                  disabled={!isValid || !selectedToken}
+                  onClick={() => handleSendWithCrypto(sendAmount.toString())}
+                  disabled={!isValid || !selectedToken || !!sendStep}
                   className="w-full rounded-2xl bg-gray-900 text-white font-semibold hover:bg-gray-800 disabled:opacity-40 px-4 py-3"
                 >
-                  {selectedToken ? `Send ${formatDecimal(sendAmount.toString(), 6)} ${selectedToken.symbol}` : "Select a token"}
+                  {sendStep ? sendStep : selectedToken ? `Send ${formatDecimal(sendAmount.toString(), 6)} ${selectedToken.symbol}` : "Select a token"}
                 </button>
               </div>
             )}

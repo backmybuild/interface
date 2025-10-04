@@ -2,8 +2,8 @@
 import { Metadata, NextPage, ResolvingMetadata } from "next";
 import { headers } from "next/headers"; // added
 import { DonationInfo } from "./info";
-import WalletProvider from "./wallet-provider";
-import { getUserInfo } from "./get-user-info";
+import WalletProvider from "../wallet-provider";
+import { getUserInfo } from "../get-user-info";
 
 type Props = {
   params: Promise<{ identify: string }>;

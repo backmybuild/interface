@@ -1,6 +1,6 @@
 import { Address, createPublicClient, getAddress, http, zeroAddress } from "viem"
 import { normalize } from "viem/ens"
-import { mainnet } from "viem/chains"
+import { base, mainnet } from "viem/chains"
 import axios from "axios";
 
 export interface UserInfo {
@@ -44,6 +44,21 @@ const getUserInfoFromWeb3Bio = async (identify: string): Promise<UserInfo | null
     return userInfo
   } catch (error) {
     console.error("Error fetching user info from web3.bio:", error)
+    return null
+  }
+}
+
+
+export const getUserPrimaryName = async (address: string): Promise<string | null> => {
+  const baseClient = createPublicClient({
+    chain: base,
+    transport: http(),
+  })
+  try {
+    const name = await baseClient.getEnsName({ address: address as Address })
+    return name
+  } catch (error) {
+    console.error("Error fetching ENS name:", error)
     return null
   }
 }
