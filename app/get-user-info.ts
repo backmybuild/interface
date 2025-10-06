@@ -37,7 +37,7 @@ const getUserInfoFromWeb3Bio = async (identify: string): Promise<UserInfo | null
     const userInfo: UserInfo = {
       address: (data[0].address as Address) || identify,
       displayName: (data[0].displayName as string) || identify,
-      avatar: data[0].avatar || `https://effigy.im/a/${data[0].address}.png`,
+      avatar: data[0].avatar || `https://api.dicebear.com/7.x/shapes/svg?seed=${identify}`,
       description: data[0].description as string,
       socials: uniqueLinks.splice(0, 3),
     };
@@ -99,7 +99,7 @@ export const getUserInfo = async (identify: string): Promise<UserInfo | null> =>
     if (address === zeroAddress) {
       return null
     }
-    const avatar = res[1] || `https://effigy.im/a/${address}.png`
+    const avatar = res[1] || `https://api.dicebear.com/7.x/shapes/svg?seed=${identify}`
     const socials = [twitter, website, farcaster, github].filter((item): item is string => !!item)
     const description = res[2] || ''
     const userInfo: UserInfo = {
